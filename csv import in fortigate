@@ -1,0 +1,34 @@
+from csv import DictReader
+
+from netmiko import Netmiko
+
+fw_01 = {'host': '192.168.0.105',
+    'username': 'username',
+    'password': 'passsword',
+    'device_type': 'fortinet',
+    'port': 2000,
+}
+
+print(f"{'#'*20} connecting to the device {'#'*20}")
+
+net_connect = Netmiko(**fw_01)
+
+print(net_connect.find_prompt())
+
+with open('P1.csv') as csv_file:
+
+    ip_details = DictReader(csv_file)
+
+    for ip in ip_details:
+
+        print(f"{'#' * 20} Configuring Object {ip['NAME']}{'#' * 20}")
+
+        config = ['config firewall address',
+                  f'edit {ip["NAME"]}',
+                  'set type ipmask',
+                  f'set subnet {ip["IP"]}',
+                  'end',
+                  ]
+        send_config = net_connect.send_config_set(config)
+
+        print(send_config)

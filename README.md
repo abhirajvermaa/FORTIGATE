@@ -1,2 +1,0 @@
-# FORTIGATE
-Fortigate.py
